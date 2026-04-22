@@ -1,0 +1,46 @@
+[
+  {
+    "id": "plan_cc_001",
+    "provider": "cloud_code",
+    "planName": "Cloud Code Pro",
+    "tokenBudget": 500000,
+    "period": "monthly",
+    "pricePerPeriod": 19.99,
+    "renewalDate": "2026-05-15",
+    "createdAt": "2026-04-01T10:00:00.000Z",
+    "updatedAt": "2026-04-01T10:00:00.000Z"
+  },
+  {
+    "id": "plan_cx_001",
+    "provider": "codex",
+    "planName": "OpenAI Codex CLI",
+    "tokenBudget": 1000000,
+    "period": "monthly",
+    "pricePerPeriod": 29.99,
+    "renewalDate": "2026-05-01",
+    "createdAt": "2026-03-15T08:30:00.000Z",
+    "updatedAt": "2026-03-15T08:30:00.000Z"
+  },
+  {
+    "id": "plan_glm_001",
+    "provider": "glm",
+    "planName": "Zhipu AI Coding Plan",
+    "tokenBudget": 200000,
+    "period": "monthly",
+    "pricePerPeriod": 14.99,
+    "renewalDate": "2026-05-22",
+    "createdAt": "2026-04-10T14:00:00.000Z",
+    "updatedAt": "2026-04-10T14:00:00.000Z"
+  },
+  {
+    "id": "plan_mm_001",
+    "provider": "minimax",
+    "planName": "MiniMax Coding Pro",
+    "tokenBudget": 300000,
+    "period": "monthly",
+    "pricePerPeriod": 12.99,
+    "renewalDate": "2026-04-28",
+    "createdAt": "2026-03-20T09:00:00.000Z",
+    "updatedAt": "2026-03-20T09:00:00.000Z"
+  }
+]
