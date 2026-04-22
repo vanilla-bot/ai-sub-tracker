@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { computePlanWithUsage, formatCurrency, } from './plan';
+import { computePlanWithUsage, formatCurrency, } from './plan.js'
 describe('Provider type', () => {
     it('should accept valid providers', () => {
         const providers = ['cloud_code', 'codex', 'glm', 'minimax'];

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Text } from 'ink';
+import { Box, Text, useInput } from 'ink';
 import Dashboard from './components/Dashboard';
 import AddPlanForm from './components/AddPlanForm';
 import UsageLogView from './components/UsageLogView';
@@ -28,6 +28,26 @@ const App: React.FC<AppProps> = ({
     computePlanWithUsage(plan, usageEntries)
   );
 
+  // Global keyboard navigation
+  useInput((input, key) => {
+    const ch = input.toLowerCase();
+
+    if (ch === 'a' && currentScreen !== 'addPlan') {
+      setCurrentScreen('addPlan');
+      return;
+    }
+    if (ch === 'd' || ch === 'u' || ch === 'c') {
+      // Only switch to dashboard if not already there
+      if (currentScreen !== 'dashboard') {
+        setCurrentScreen('dashboard');
+      }
+      return;
+    }
+    if (ch === 'q') {
+      process.exit(0);
+    }
+  });
+
   const handleAddPlan = async (plan: Plan) => {
     const updatedPlans = [...plans, plan];
     setPlans(updatedPlans);
@@ -54,16 +74,23 @@ const App: React.FC<AppProps> = ({
         <Text bold>AI Subscription Tracker</Text>
       </Box>
       <Box>
-        <Text>Navigate: [D]ashboard | [A]dd Plan | [U]sage Log | [C]ost Summary | [Q]uit</Text>
+        <Text dimColor>Navigate: </Text>
+        <Text bold color="cyan">[A]</Text><Text dimColor>dd </Text>
+        <Text bold color="cyan">[D]</Text><Text dimColor>ashboard </Text>
+        <Text bold color="cyan">[U]</Text><Text dimColor>sage </Text>
+        <Text bold color="cyan">[C]</Text><Text dimColor>ost </Text>
+        <Text bold color="red">[Q]</Text><Text dimColor>uit</Text>
       </Box>
       <Box padding={1}>
         {currentScreen === 'dashboard' && (
           <Dashboard
             plans={plansWithUsage}
+            onAddPlan={() => setCurrentScreen('addPlan')}
             onLogUsage={(planId) => {
               setSelectedPlanId(planId);
               setCurrentScreen('usageLog');
             }}
+            onCostSummary={() => setCurrentScreen('costSummary')}
           />
         )}
         {currentScreen === 'addPlan' && (

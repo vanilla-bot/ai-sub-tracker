@@ -2,7 +2,7 @@
 import meow from 'meow';
 import React from 'react';
 import { render } from 'ink';
-import App from './app';
+import App from './app.js'
 const cli = meow(`
   Usage
     $ ai-sub-tracker

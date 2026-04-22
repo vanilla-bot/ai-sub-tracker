@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import UsageLogView from './UsageLogView';
+import UsageLogView from './UsageLogView.js'
 // Mock ink components
 vi.mock('ink', async () => {
     const actual = await vi.importActual('ink');

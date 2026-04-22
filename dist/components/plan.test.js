@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import PlanCard from './PlanCard';
-import Dashboard from './Dashboard';
+import PlanCard from './PlanCard.js'
+import Dashboard from './Dashboard.js'
 // Test PlanCard component structure and props
 describe('PlanCard', () => {
     const mockPlan = {

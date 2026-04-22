@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import AddPlanForm from './AddPlanForm';
+import AddPlanForm from './AddPlanForm.js'
 describe('AddPlanForm', () => {
     // Mock plan for edit mode testing
     const mockPlan = {

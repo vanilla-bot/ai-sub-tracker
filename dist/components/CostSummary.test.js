@@ -1,6 +1,6 @@
 import { jsx as _jsx } from "react/jsx-runtime";
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import CostSummary from './CostSummary';
+import CostSummary from './CostSummary.js'
 // Mock ink components
 vi.mock('ink', async () => {
     const actual = await vi.importActual('ink');

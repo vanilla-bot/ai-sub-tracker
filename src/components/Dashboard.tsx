@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Box, Text } from 'ink';
+import React, { useState } from 'react';
+import { Box, Text, useInput } from 'ink';
 import PlanCard from './PlanCard';
 import type { PlanWithUsage } from '../models/plan';
 
@@ -23,101 +23,42 @@ const Dashboard: React.FC<DashboardProps> = ({
   onQuit,
 }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [columns, setColumns] = useState(3);
 
-  // Recalculate columns based on terminal width
-  useEffect(() => {
-    const calculateColumns = () => {
-      // Each card is 40 wide, plus 1 gap
-      const width = process.stdout.columns || 80;
-      const cols = Math.max(1, Math.floor(width / 41));
-      setColumns(cols);
-    };
-    calculateColumns();
-    // Listen for resize would require a special handler
-    // For now, recalculate on any key press
-  }, []);
+  // Get terminal width for column calculation
+  const columns = Math.max(1, Math.floor((process.stdout.columns || 80) / 41));
 
-  // Keyboard navigation
-  const handleKeyPress = useCallback(
-    (key: string) => {
-      const totalCards = plans.length;
+  // Keyboard navigation using Ink's useInput
+  useInput((input, key) => {
+    const totalCards = plans.length;
+    if (totalCards === 0) return;
 
-      switch (key.toLowerCase()) {
-        case 'a':
-          onAddPlan?.();
-          break;
-        case 'e':
-          if (plans[selectedIndex]) {
-            onEditPlan?.(plans[selectedIndex].id);
-          }
-          break;
-        case 'd':
-          if (plans[selectedIndex]) {
-            onDeletePlan?.(plans[selectedIndex].id);
-          }
-          break;
-        case 'l':
-          if (plans[selectedIndex]) {
-            onLogUsage?.(plans[selectedIndex].id);
-          }
-          break;
-        case 'c':
-          onCostSummary?.();
-          break;
-        case 'q':
-          onQuit?.();
-          break;
-        case 'arrowup':
-        case 'k':
-          if (totalCards > 0) {
-            setSelectedIndex((prev) => (prev - columns + totalCards) % totalCards);
-          }
-          break;
-        case 'arrowdown':
-        case 'j':
-          if (totalCards > 0) {
-            setSelectedIndex((prev) => (prev + columns) % totalCards);
-          }
-          break;
-        case 'arrowleft':
-        case 'h':
-          if (totalCards > 0) {
-            setSelectedIndex((prev) => (prev - 1 + totalCards) % totalCards);
-          }
-          break;
-        case 'arrowright':
-        case 'l':
-          if (totalCards > 0) {
-            setSelectedIndex((prev) => (prev + 1) % totalCards);
-          }
-          break;
-      }
-    },
-    [plans, selectedIndex, columns, onAddPlan, onEditPlan, onDeletePlan, onLogUsage, onCostSummary, onQuit]
-  );
-
-  // Register stdin listener for keyboard input
-  useEffect(() => {
-    const handleStdin = (data: Buffer) => {
-      const key = data.toString();
-      handleKeyPress(key);
-    };
-
-    if (process.stdin.isTTY) {
-      process.stdin.on('data', handleStdin);
-      return () => {
-        process.stdin.off('data', handleStdin);
-      };
+    if (key.upArrow || input === 'k') {
+      setSelectedIndex((prev) => (prev - columns + totalCards) % totalCards);
+    } else if (key.downArrow || input === 'j') {
+      setSelectedIndex((prev) => (prev + columns) % totalCards);
+    } else if (key.leftArrow || input === 'h') {
+      setSelectedIndex((prev) => (prev - 1 + totalCards) % totalCards);
+    } else if (key.rightArrow || input === 'l') {
+      setSelectedIndex((prev) => (prev + 1) % totalCards);
+    } else if (input === 'a' || input === 'A') {
+      onAddPlan?.();
+    } else if (input === 'e' || input === 'E') {
+      if (plans[selectedIndex]) onEditPlan?.(plans[selectedIndex].id);
+    } else if (input === 'd' || input === 'D') {
+      if (plans[selectedIndex]) onDeletePlan?.(plans[selectedIndex].id);
+    } else if (input === 'u' || input === 'U') {
+      if (plans[selectedIndex]) onLogUsage?.(plans[selectedIndex].id);
+    } else if (input === 'c' || input === 'C') {
+      onCostSummary?.();
+    } else if (input === 'q' || input === 'Q') {
+      onQuit?.();
     }
-  }, [handleKeyPress]);
+  });
 
   // Update selected index when plans change
-  useEffect(() => {
-    if (selectedIndex >= plans.length && plans.length > 0) {
-      setSelectedIndex(0);
-    }
-  }, [plans, selectedIndex]);
+  if (selectedIndex >= plans.length && plans.length > 0) {
+    setSelectedIndex(0);
+  }
 
   // Empty state
   if (plans.length === 0) {
@@ -139,24 +80,12 @@ const Dashboard: React.FC<DashboardProps> = ({
     <Box flexDirection="column">
       {/* Keyboard navigation hints */}
       <Box justifyContent="space-around" marginBottom={1}>
-        <Text dimColor>
-          [<Text bold color="cyan">a</Text>]dd
-        </Text>
-        <Text dimColor>
-          [<Text bold color="cyan">e</Text>]dit
-        </Text>
-        <Text dimColor>
-          [<Text bold color="cyan">d</Text>]elete
-        </Text>
-        <Text dimColor>
-          [<Text bold color="cyan">l</Text>]og usage
-        </Text>
-        <Text dimColor>
-          [<Text bold color="cyan">c</Text>]ost
-        </Text>
-        <Text dimColor>
-          [<Text bold color="cyan">q</Text>]uit
-        </Text>
+        <Text dimColor>[<Text bold color="cyan">a</Text>]dd</Text>
+        <Text dimColor>[<Text bold color="cyan">e</Text>]dit</Text>
+        <Text dimColor>[<Text bold color="cyan">d</Text>]elete</Text>
+        <Text dimColor>[<Text bold color="cyan">u</Text>]sage</Text>
+        <Text dimColor>[<Text bold color="cyan">c</Text>]ost</Text>
+        <Text dimColor>[<Text bold color="cyan">q</Text>]uit</Text>
       </Box>
 
       <Box justifyContent="space-between" marginBottom={1}>
