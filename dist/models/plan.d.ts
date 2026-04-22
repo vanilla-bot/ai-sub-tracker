@@ -3,21 +3,25 @@ export type PlanPeriod = 'monthly' | 'quarterly' | 'yearly';
 export type PlanStatus = 'active' | 'expired' | 'cancelled';
 export interface Plan {
     id: string;
-    name: string;
+    planName: string;
     provider: Provider;
     period: PlanPeriod;
-    price: number;
+    pricePerPeriod: number;
     currency: string;
-    maxTokens: number;
+    tokenBudget: number;
     status: PlanStatus;
     startDate: string;
-    endDate: string;
+    renewalDate: string;
+    createdAt: string;
+    updatedAt: string;
 }
 export interface UsageEntry {
     id: string;
     planId: string;
-    date: string;
     tokens: number;
+    date: string;
+    note: string;
+    createdAt: string;
     periodStart: string;
     periodEnd: string;
 }

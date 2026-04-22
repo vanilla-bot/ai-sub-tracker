@@ -1,6 +1,6 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { Box, Text, useInput } from 'ink';
-import { formatCurrency } from '../models/plan.js'
+import { formatCurrency } from '../models/plan';
 /**
  * Calculate the monthly equivalent cost for a plan based on its billing period.
  */
@@ -44,7 +44,7 @@ const CostSummary = ({ plans, onBack }) => {
     });
     // Calculate totals
     const monthlyTotal = plans.reduce((sum, plan) => {
-        return sum + getMonthlyEquivalent(plan.price, plan.period);
+        return sum + getMonthlyEquivalent(plan.pricePerPeriod, plan.period);
     }, 0);
     const annualProjection = monthlyTotal * 12;
     // Format period name for display
@@ -65,9 +65,9 @@ const CostSummary = ({ plans, onBack }) => {
         return (_jsxs(Box, { flexDirection: "column", borderStyle: "round", borderColor: "cyan", padding: 1, children: [_jsx(Text, { bold: true, children: "Cost Summary" }), _jsx(Box, { marginTop: 1 }), _jsx(Text, { dimColor: true, children: "No plans to display." }), _jsx(Text, { dimColor: true, children: "Add a plan to see cost projections." }), _jsx(Box, { marginTop: 1 }), _jsx(Text, { dimColor: true, children: "Press [Esc] to go back" })] }));
     }
     return (_jsxs(Box, { flexDirection: "column", borderStyle: "round", borderColor: "cyan", padding: 1, children: [_jsx(Text, { bold: true, children: "Cost Summary" }), _jsx(Box, { marginTop: 1 }), _jsxs(Box, { justifyContent: "space-between", borderStyle: "single", paddingX: 1, children: [_jsx(Text, { bold: true, children: "Plan" }), _jsx(Text, { bold: true, children: "Period" }), _jsx(Text, { bold: true, children: "Price" }), _jsx(Text, { bold: true, children: "Monthly" })] }), plans.map((plan) => {
-                const monthlyEquiv = getMonthlyEquivalent(plan.price, plan.period);
+                const monthlyEquiv = getMonthlyEquivalent(plan.pricePerPeriod, plan.period);
                 const divisor = getPeriodDivisor(plan.period);
-                return (_jsxs(Box, { justifyContent: "space-between", paddingX: 1, children: [_jsx(Text, { children: plan.name }), _jsx(Text, { dimColor: true, children: formatPeriod(plan.period) }), _jsx(Text, { children: formatCurrency(plan.price, plan.currency) }), _jsxs(Text, { children: [formatCurrency(monthlyEquiv, plan.currency), "/mo"] })] }, plan.id));
+                return (_jsxs(Box, { justifyContent: "space-between", paddingX: 1, children: [_jsx(Text, { children: plan.planName }), _jsx(Text, { dimColor: true, children: formatPeriod(plan.period) }), _jsx(Text, { children: formatCurrency(plan.pricePerPeriod, plan.currency) }), _jsxs(Text, { children: [formatCurrency(monthlyEquiv, plan.currency), "/mo"] })] }, plan.id));
             }), _jsx(Box, { marginTop: 1 }), _jsxs(Box, { flexDirection: "column", borderStyle: "single", padding: 1, children: [_jsxs(Box, { justifyContent: "space-between", children: [_jsx(Text, { bold: true, children: "Monthly Total:" }), _jsx(Text, { bold: true, children: formatCurrency(monthlyTotal, 'USD') })] }), _jsxs(Box, { justifyContent: "space-between", children: [_jsx(Text, { bold: true, children: "Annual Projection:" }), _jsx(Text, { bold: true, color: "cyan", children: formatCurrency(annualProjection, 'USD') })] })] }), _jsx(Box, { marginTop: 1 }), _jsx(Text, { dimColor: true, children: "Press [Esc] to go back" })] }));
 };
 export default CostSummary;

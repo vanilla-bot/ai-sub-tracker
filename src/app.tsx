@@ -73,7 +73,19 @@ const App: React.FC<AppProps> = ({
           <UsageLogView
             entries={usageEntries}
             planId={selectedPlanId}
-            onAdd={handleAddUsageEntry}
+            onAdd={(tokens, note) => {
+              const newEntry: UsageEntry = {
+                id: `entry_${Date.now()}`,
+                planId: selectedPlanId || '',
+                tokens,
+                date: new Date().toISOString().split('T')[0],
+                note,
+                createdAt: new Date().toISOString(),
+                periodStart: '',
+                periodEnd: '',
+              };
+              handleAddUsageEntry(newEntry);
+            }}
             onDelete={handleDeleteUsageEntry}
             onBack={() => setCurrentScreen('dashboard')}
           />

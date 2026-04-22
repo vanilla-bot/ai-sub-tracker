@@ -36,24 +36,26 @@ describe('Plan type', () => {
   it('should create a valid Plan object', () => {
     const plan: Plan = {
       id: 'plan_001',
-      name: 'Pro Monthly',
+      planName: 'Pro Monthly',
       provider: 'minimax',
       period: 'monthly',
-      price: 29.99,
+      pricePerPeriod: 29.99,
       currency: 'USD',
-      maxTokens: 1000000,
+      tokenBudget: 1000000,
       status: 'active',
       startDate: '2024-01-01',
-      endDate: '2024-01-31',
+      renewalDate: '2024-01-31',
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
     };
 
     expect(plan.id).toBe('plan_001');
-    expect(plan.name).toBe('Pro Monthly');
+    expect(plan.planName).toBe('Pro Monthly');
     expect(plan.provider).toBe('minimax');
     expect(plan.period).toBe('monthly');
-    expect(plan.price).toBe(29.99);
+    expect(plan.pricePerPeriod).toBe(29.99);
     expect(plan.currency).toBe('USD');
-    expect(plan.maxTokens).toBe(1000000);
+    expect(plan.tokenBudget).toBe(1000000);
     expect(plan.status).toBe('active');
   });
 });
@@ -65,6 +67,8 @@ describe('UsageEntry type', () => {
       planId: 'plan_001',
       date: '2024-01-15',
       tokens: 150000,
+      note: 'Test usage',
+      createdAt: '2024-01-15T00:00:00.000Z',
       periodStart: '2024-01-01',
       periodEnd: '2024-01-31',
     };
@@ -73,6 +77,8 @@ describe('UsageEntry type', () => {
     expect(entry.planId).toBe('plan_001');
     expect(entry.date).toBe('2024-01-15');
     expect(entry.tokens).toBe(150000);
+    expect(entry.note).toBe('Test usage');
+    expect(entry.createdAt).toBe('2024-01-15T00:00:00.000Z');
     expect(entry.periodStart).toBe('2024-01-01');
     expect(entry.periodEnd).toBe('2024-01-31');
   });
@@ -82,15 +88,17 @@ describe('PlanWithUsage type', () => {
   it('should combine plan with usage summary', () => {
     const plan: Plan = {
       id: 'plan_001',
-      name: 'Pro Monthly',
+      planName: 'Pro Monthly',
       provider: 'minimax',
       period: 'monthly',
-      price: 29.99,
+      pricePerPeriod: 29.99,
       currency: 'USD',
-      maxTokens: 1000000,
+      tokenBudget: 1000000,
       status: 'active',
       startDate: '2024-01-01',
-      endDate: '2024-01-31',
+      renewalDate: '2024-01-31',
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
     };
 
     const planWithUsage: PlanWithUsage = {
@@ -111,27 +119,31 @@ describe('computePlanWithUsage', () => {
   const plans: Plan[] = [
     {
       id: 'plan_001',
-      name: 'Pro Monthly',
+      planName: 'Pro Monthly',
       provider: 'minimax',
       period: 'monthly',
-      price: 29.99,
+      pricePerPeriod: 29.99,
       currency: 'USD',
-      maxTokens: 1000000,
+      tokenBudget: 1000000,
       status: 'active',
       startDate: '2024-01-01',
-      endDate: '2024-01-31',
+      renewalDate: '2024-01-31',
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
     },
     {
       id: 'plan_002',
-      name: 'Enterprise Yearly',
+      planName: 'Enterprise Yearly',
       provider: 'codex',
       period: 'yearly',
-      price: 299.99,
+      pricePerPeriod: 299.99,
       currency: 'USD',
-      maxTokens: 10000000,
+      tokenBudget: 10000000,
       status: 'active',
       startDate: '2024-01-01',
-      endDate: '2024-12-31',
+      renewalDate: '2024-12-31',
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
     },
   ];
 
@@ -141,6 +153,8 @@ describe('computePlanWithUsage', () => {
       planId: 'plan_001',
       date: '2024-01-15',
       tokens: 150000,
+      note: 'Usage 1',
+      createdAt: '2024-01-15T00:00:00.000Z',
       periodStart: '2024-01-01',
       periodEnd: '2024-01-31',
     },
@@ -149,6 +163,8 @@ describe('computePlanWithUsage', () => {
       planId: 'plan_001',
       date: '2024-01-20',
       tokens: 50000,
+      note: 'Usage 2',
+      createdAt: '2024-01-20T00:00:00.000Z',
       periodStart: '2024-01-01',
       periodEnd: '2024-01-31',
     },
@@ -157,6 +173,8 @@ describe('computePlanWithUsage', () => {
       planId: 'plan_002',
       date: '2024-06-15',
       tokens: 500000,
+      note: 'Usage 3',
+      createdAt: '2024-06-15T00:00:00.000Z',
       periodStart: '2024-01-01',
       periodEnd: '2024-12-31',
     },
@@ -182,15 +200,17 @@ describe('computePlanWithUsage', () => {
   it('should handle plan with no usage entries', () => {
     const emptyPlan: Plan = {
       id: 'plan_003',
-      name: 'Empty Plan',
+      planName: 'Empty Plan',
       provider: 'glm',
       period: 'monthly',
-      price: 9.99,
+      pricePerPeriod: 9.99,
       currency: 'USD',
-      maxTokens: 100000,
+      tokenBudget: 100000,
       status: 'active',
       startDate: '2024-01-01',
-      endDate: '2024-01-31',
+      renewalDate: '2024-01-31',
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
     };
 
     const result = computePlanWithUsage(emptyPlan, usageEntries);
@@ -203,13 +223,13 @@ describe('computePlanWithUsage', () => {
   it('should calculate remaining tokens correctly', () => {
     const result = computePlanWithUsage(plans[0], usageEntries);
 
-    expect(result.remainingTokens).toBe(result.maxTokens - result.totalTokensUsed);
+    expect(result.remainingTokens).toBe(result.tokenBudget - result.totalTokensUsed);
   });
 
   it('should calculate usage percentage correctly', () => {
     const result = computePlanWithUsage(plans[0], usageEntries);
 
-    const expectedPercentage = Math.round((result.totalTokensUsed / result.maxTokens) * 100);
+    const expectedPercentage = Math.round((result.totalTokensUsed / result.tokenBudget) * 100);
     expect(result.usagePercentage).toBe(expectedPercentage);
   });
 });

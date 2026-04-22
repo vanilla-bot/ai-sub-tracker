@@ -19,11 +19,11 @@ const AddPlanForm = ({ onSubmit, onCancel, plan }) => {
     const isEditMode = Boolean(plan);
     // Form state
     const [provider, setProvider] = useState(plan?.provider || 'minimax');
-    const [planName, setPlanName] = useState(plan?.name || '');
-    const [tokenBudget, setTokenBudget] = useState(plan?.maxTokens?.toString() || '');
+    const [planName, setPlanName] = useState(plan?.planName || '');
+    const [tokenBudget, setTokenBudget] = useState(plan?.tokenBudget?.toString() || '');
     const [period, setPeriod] = useState(plan?.period || 'monthly');
-    const [price, setPrice] = useState(plan?.price?.toString() || '');
-    const [renewalDate, setRenewalDate] = useState(plan?.endDate || '');
+    const [price, setPrice] = useState(plan?.pricePerPeriod?.toString() || '');
+    const [renewalDate, setRenewalDate] = useState(plan?.renewalDate || '');
     // Focus state - index into FIELD_ORDER
     const [focusIndex, setFocusIndex] = useState(0);
     const currentField = FIELD_ORDER[focusIndex];
@@ -140,15 +140,17 @@ const AddPlanForm = ({ onSubmit, onCancel, plan }) => {
         }
         const newPlan = {
             id: plan?.id || `plan_${Date.now()}`,
-            name: planName.trim(),
+            planName: planName.trim(),
             provider,
             period,
-            price: Number(price),
+            pricePerPeriod: Number(price),
             currency: plan?.currency || 'USD',
-            maxTokens: Number(tokenBudget),
+            tokenBudget: Number(tokenBudget),
             status: plan?.status || 'active',
             startDate: plan?.startDate || new Date().toISOString().split('T')[0],
-            endDate: renewalDate,
+            renewalDate: renewalDate,
+            createdAt: plan?.createdAt || new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
         };
         onSubmit(newPlan);
     };

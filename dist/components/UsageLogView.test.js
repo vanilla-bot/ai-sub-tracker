@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import UsageLogView from './UsageLogView.js'
+import UsageLogView from './UsageLogView';
 // Mock ink components
 vi.mock('ink', async () => {
     const actual = await vi.importActual('ink');
@@ -24,9 +24,9 @@ vi.mock('ink', async () => {
 });
 describe('UsageLogView', () => {
     const mockEntries = [
-        { id: '1', planId: 'plan_001', date: '2024-01-15', tokens: 50000, periodStart: '2024-01-01', periodEnd: '2024-01-31' },
-        { id: '2', planId: 'plan_001', date: '2024-01-10', tokens: 30000, periodStart: '2024-01-01', periodEnd: '2024-01-31' },
-        { id: '3', planId: 'plan_001', date: '2024-01-05', tokens: 20000, periodStart: '2024-01-01', periodEnd: '2024-01-31' },
+        { id: '1', planId: 'plan_001', date: '2024-01-15', tokens: 50000, note: 'Entry 1', createdAt: '2024-01-15T00:00:00.000Z', periodStart: '2024-01-01', periodEnd: '2024-01-31' },
+        { id: '2', planId: 'plan_001', date: '2024-01-10', tokens: 30000, note: 'Entry 2', createdAt: '2024-01-10T00:00:00.000Z', periodStart: '2024-01-01', periodEnd: '2024-01-31' },
+        { id: '3', planId: 'plan_001', date: '2024-01-05', tokens: 20000, note: 'Entry 3', createdAt: '2024-01-05T00:00:00.000Z', periodStart: '2024-01-01', periodEnd: '2024-01-31' },
     ];
     const mockProps = {
         entries: mockEntries,

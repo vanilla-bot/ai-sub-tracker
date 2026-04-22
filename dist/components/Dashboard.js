@@ -1,7 +1,7 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useState, useEffect, useCallback } from 'react';
 import { Box, Text } from 'ink';
-import PlanCard from './PlanCard.js'
+import PlanCard from './PlanCard';
 const Dashboard = ({ plans, onAddPlan, onEditPlan, onDeletePlan, onLogUsage, onCostSummary, onQuit, }) => {
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [columns, setColumns] = useState(3);
@@ -104,7 +104,7 @@ const Dashboard = ({ plans, onAddPlan, onEditPlan, onDeletePlan, onLogUsage, onC
                         const isSelected = planIndex === selectedIndex;
                         return (_jsx(PlanCard, { plan: plan, isSelected: isSelected }, plan.id));
                     }), row.length < columns &&
-                        Array.from({ length: columns - row.length }).map((_, i) => (_jsx(Box, { width: 40 }, `empty-${i}`)))] }, rowIndex))), plans[selectedIndex] && (_jsxs(Box, { marginTop: 1, padding: 1, borderStyle: "single", children: [_jsx(Text, { bold: true, children: "Selected: " }), _jsx(Text, { children: plans[selectedIndex].name }), _jsxs(Text, { dimColor: true, children: [" (", plans[selectedIndex].provider, ")"] }), _jsx(Text, { children: " | " }), _jsxs(Text, { children: [plans[selectedIndex].totalTokensUsed.toLocaleString(), " /", ' ', plans[selectedIndex].maxTokens.toLocaleString(), " tokens used"] })] }))] }));
+                        Array.from({ length: columns - row.length }).map((_, i) => (_jsx(Box, { width: 40 }, `empty-${i}`)))] }, rowIndex))), plans[selectedIndex] && (_jsxs(Box, { marginTop: 1, padding: 1, borderStyle: "single", children: [_jsx(Text, { bold: true, children: "Selected: " }), _jsx(Text, { children: plans[selectedIndex].planName }), _jsxs(Text, { dimColor: true, children: [" (", plans[selectedIndex].provider, ")"] }), _jsx(Text, { children: " | " }), _jsxs(Text, { children: [plans[selectedIndex].totalTokensUsed.toLocaleString(), " /", ' ', plans[selectedIndex].tokenBudget.toLocaleString(), " tokens used"] })] }))] }));
 };
 export default Dashboard;
 //# sourceMappingURL=Dashboard.js.map

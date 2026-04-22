@@ -1,22 +1,24 @@
 import { describe, it, expect } from 'vitest';
-import PlanCard from './PlanCard.js'
-import Dashboard from './Dashboard.js'
+import PlanCard from './PlanCard';
+import Dashboard from './Dashboard';
 // Test PlanCard component structure and props
 describe('PlanCard', () => {
     const mockPlan = {
         id: 'plan_001',
-        name: 'Pro Monthly',
+        planName: 'Pro Monthly',
         provider: 'minimax',
         period: 'monthly',
-        price: 29.99,
+        pricePerPeriod: 29.99,
         currency: 'USD',
-        maxTokens: 1000000,
+        tokenBudget: 1000000,
         status: 'active',
         startDate: '2024-01-01',
-        endDate: '2024-01-31',
+        renewalDate: '2024-01-31',
         totalTokensUsed: 250000,
         remainingTokens: 750000,
         usagePercentage: 25,
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
     };
     it('should accept plan prop', () => {
         // This test verifies the component can be instantiated with the correct props
@@ -56,7 +58,7 @@ describe('PlanCard', () => {
             remainingTokens: 750000,
             usagePercentage: 25,
         };
-        expect(plan.totalTokensUsed + plan.remainingTokens).toBe(plan.maxTokens);
+        expect(plan.totalTokensUsed + plan.remainingTokens).toBe(plan.tokenBudget);
     });
 });
 // Test Dashboard component structure
@@ -64,33 +66,37 @@ describe('Dashboard', () => {
     const mockPlans = [
         {
             id: 'plan_001',
-            name: 'Pro Monthly',
+            planName: 'Pro Monthly',
             provider: 'minimax',
             period: 'monthly',
-            price: 29.99,
+            pricePerPeriod: 29.99,
             currency: 'USD',
-            maxTokens: 1000000,
+            tokenBudget: 1000000,
             status: 'active',
             startDate: '2024-01-01',
-            endDate: '2024-01-31',
+            renewalDate: '2024-01-31',
             totalTokensUsed: 250000,
             remainingTokens: 750000,
             usagePercentage: 25,
+            createdAt: '2024-01-01T00:00:00.000Z',
+            updatedAt: '2024-01-01T00:00:00.000Z',
         },
         {
             id: 'plan_002',
-            name: 'Enterprise Yearly',
+            planName: 'Enterprise Yearly',
             provider: 'codex',
             period: 'yearly',
-            price: 299.99,
+            pricePerPeriod: 299.99,
             currency: 'USD',
-            maxTokens: 10000000,
+            tokenBudget: 10000000,
             status: 'active',
             startDate: '2024-01-01',
-            endDate: '2024-12-31',
+            renewalDate: '2024-12-31',
             totalTokensUsed: 500000,
             remainingTokens: 9500000,
             usagePercentage: 5,
+            createdAt: '2024-01-01T00:00:00.000Z',
+            updatedAt: '2024-01-01T00:00:00.000Z',
         },
     ];
     it('should accept plans prop', () => {
@@ -100,12 +106,12 @@ describe('Dashboard', () => {
     it('should have plans with required fields', () => {
         mockPlans.forEach((plan) => {
             expect(plan).toHaveProperty('id');
-            expect(plan).toHaveProperty('name');
+            expect(plan).toHaveProperty('planName');
             expect(plan).toHaveProperty('provider');
-            expect(plan).toHaveProperty('price');
+            expect(plan).toHaveProperty('pricePerPeriod');
             expect(plan).toHaveProperty('currency');
             expect(plan).toHaveProperty('status');
-            expect(plan).toHaveProperty('endDate');
+            expect(plan).toHaveProperty('renewalDate');
             expect(plan).toHaveProperty('usagePercentage');
         });
     });

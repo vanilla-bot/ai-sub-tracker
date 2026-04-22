@@ -8,8 +8,8 @@ export function computePlanWithUsage(plan, usageEntries) {
     // Sum all tokens used in the period
     const totalTokensUsed = planEntries.reduce((sum, entry) => sum + entry.tokens, 0);
     // Calculate remaining tokens and percentage
-    const remainingTokens = Math.max(0, plan.maxTokens - totalTokensUsed);
-    const usagePercentage = Math.round((totalTokensUsed / plan.maxTokens) * 100);
+    const remainingTokens = Math.max(0, plan.tokenBudget - totalTokensUsed);
+    const usagePercentage = Math.round((totalTokensUsed / plan.tokenBudget) * 100);
     return {
         ...plan,
         totalTokensUsed,

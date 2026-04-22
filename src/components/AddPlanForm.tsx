@@ -32,11 +32,11 @@ const AddPlanForm: React.FC<AddPlanFormProps> = ({ onSubmit, onCancel, plan }) =
 
   // Form state
   const [provider, setProvider] = useState<Provider>(plan?.provider || 'minimax');
-  const [planName, setPlanName] = useState(plan?.name || '');
-  const [tokenBudget, setTokenBudget] = useState(plan?.maxTokens?.toString() || '');
+  const [planName, setPlanName] = useState(plan?.planName || '');
+  const [tokenBudget, setTokenBudget] = useState(plan?.tokenBudget?.toString() || '');
   const [period, setPeriod] = useState<PlanPeriod>(plan?.period || 'monthly');
-  const [price, setPrice] = useState(plan?.price?.toString() || '');
-  const [renewalDate, setRenewalDate] = useState(plan?.endDate || '');
+  const [price, setPrice] = useState(plan?.pricePerPeriod?.toString() || '');
+  const [renewalDate, setRenewalDate] = useState(plan?.renewalDate || '');
 
   // Focus state - index into FIELD_ORDER
   const [focusIndex, setFocusIndex] = useState(0);
@@ -110,27 +110,27 @@ const AddPlanForm: React.FC<AddPlanFormProps> = ({ onSubmit, onCancel, plan }) =
     if (!key.tab && !key.return && !key.escape && !key.upArrow && !key.downArrow && !key.leftArrow && !key.rightArrow) {
       if (field === 'planName') {
         if (key.backspace || key.delete) {
-          setPlanName((prev) => prev.slice(0, -1));
+          setPlanName((prev: string) => prev.slice(0, -1));
         } else if (input) {
-          setPlanName((prev) => prev + input);
+          setPlanName((prev: string) => prev + input);
         }
       } else if (field === 'tokenBudget') {
         if (key.backspace || key.delete) {
-          setTokenBudget((prev) => prev.slice(0, -1));
+          setTokenBudget((prev: string) => prev.slice(0, -1));
         } else if (/[0-9]/.test(input)) {
-          setTokenBudget((prev) => prev + input);
+          setTokenBudget((prev: string) => prev + input);
         }
       } else if (field === 'price') {
         if (key.backspace || key.delete) {
-          setPrice((prev) => prev.slice(0, -1));
+          setPrice((prev: string) => prev.slice(0, -1));
         } else if (/[0-9.]/.test(input)) {
-          setPrice((prev) => prev + input);
+          setPrice((prev: string) => prev + input);
         }
       } else if (field === 'renewalDate') {
         if (key.backspace || key.delete) {
-          setRenewalDate((prev) => prev.slice(0, -1));
+          setRenewalDate((prev: string) => prev.slice(0, -1));
         } else if (/[0-9-]/.test(input)) {
-          setRenewalDate((prev) => prev + input);
+          setRenewalDate((prev: string) => prev + input);
         }
       }
     }
@@ -153,15 +153,17 @@ const AddPlanForm: React.FC<AddPlanFormProps> = ({ onSubmit, onCancel, plan }) =
 
     const newPlan: Plan = {
       id: plan?.id || `plan_${Date.now()}`,
-      name: planName.trim(),
+      planName: planName.trim(),
       provider,
       period,
-      price: Number(price),
+      pricePerPeriod: Number(price),
       currency: plan?.currency || 'USD',
-      maxTokens: Number(tokenBudget),
+      tokenBudget: Number(tokenBudget),
       status: plan?.status || 'active',
       startDate: plan?.startDate || new Date().toISOString().split('T')[0],
-      endDate: renewalDate,
+      renewalDate: renewalDate,
+      createdAt: plan?.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
     onSubmit(newPlan);
