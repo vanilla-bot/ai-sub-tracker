@@ -70,7 +70,7 @@ const App = ({ plansFilePath = './data/plans.json', usageFilePath = './data/usag
                             const updatedEntries = usageEntries.filter((e) => e.id !== entryId);
                             setUsageEntries(updatedEntries);
                             saveUsageEntries(usageFilePath, updatedEntries);
-                        }, onBack: () => setCurrentScreen('dashboard') })), currentScreen === 'costSummary' && _jsx(CostSummary, { plans: plansWithUsage })] })] }));
+                        }, onBack: () => setCurrentScreen('dashboard') })), currentScreen === 'costSummary' && _jsx(CostSummary, { plans: plansWithUsage, onBack: () => setCurrentScreen('dashboard') })] })] }));
 };
 export default App;
 //# sourceMappingURL=app.js.map

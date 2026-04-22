@@ -123,7 +123,7 @@ const App: React.FC<AppProps> = ({
             onBack={() => setCurrentScreen('dashboard')}
           />
         )}
-        {currentScreen === 'costSummary' && <CostSummary plans={plansWithUsage} />}
+        {currentScreen === 'costSummary' && <CostSummary plans={plansWithUsage} onBack={() => setCurrentScreen('dashboard')} />}
       </Box>
     </Box>
   );
