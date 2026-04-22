@@ -1,0 +1,72 @@
+import * as fs from 'fs';
+import * as path from 'path';
+import type { Plan, UsageEntry } from '../models/plan';
+
+const FILE_NOT_FOUND_ERROR_CODES = ['ENOENT', 'ENFILE'] as const;
+
+/**
+ * Checks if an error indicates the file was not found.
+ */
+function isFileNotFoundError(error: { code?: string }): boolean {
+  return FILE_NOT_FOUND_ERROR_CODES.includes(error.code as typeof FILE_NOT_FOUND_ERROR_CODES[number]);
+}
+
+/**
+ * Loads plans from a JSON file.
+ * Returns an empty array if the file doesn't exist.
+ * Throws if the file exists but contains invalid JSON.
+ */
+export async function loadPlans(filePath: string): Promise<Plan[]> {
+  try {
+    const content = await fs.promises.readFile(filePath, 'utf-8');
+    const parsed = JSON.parse(content);
+    if (!Array.isArray(parsed)) {
+      throw new Error('Plans file must contain a JSON array');
+    }
+    return parsed as Plan[];
+  } catch (error: unknown) {
+    if (isFileNotFoundError(error as { code?: string })) {
+      return [];
+    }
+    throw error;
+  }
+}
+
+/**
+ * Saves plans to a JSON file.
+ */
+export async function savePlans(filePath: string, plans: Plan[]): Promise<void> {
+  const dir = path.dirname(filePath);
+  await fs.promises.mkdir(dir, { recursive: true });
+  await fs.promises.writeFile(filePath, JSON.stringify(plans, null, 2), 'utf-8');
+}
+
+/**
+ * Loads usage entries from a JSON file.
+ * Returns an empty array if the file doesn't exist.
+ * Throws if the file exists but contains invalid JSON.
+ */
+export async function loadUsageEntries(filePath: string): Promise<UsageEntry[]> {
+  try {
+    const content = await fs.promises.readFile(filePath, 'utf-8');
+    const parsed = JSON.parse(content);
+    if (!Array.isArray(parsed)) {
+      throw new Error('Usage entries file must contain a JSON array');
+    }
+    return parsed as UsageEntry[];
+  } catch (error: unknown) {
+    if (isFileNotFoundError(error as { code?: string })) {
+      return [];
+    }
+    throw error;
+  }
+}
+
+/**
+ * Saves usage entries to a JSON file.
+ */
+export async function saveUsageEntries(filePath: string, entries: UsageEntry[]): Promise<void> {
+  const dir = path.dirname(filePath);
+  await fs.promises.mkdir(dir, { recursive: true });
+  await fs.promises.writeFile(filePath, JSON.stringify(entries, null, 2), 'utf-8');
+}
