@@ -22,6 +22,7 @@ const App: React.FC<AppProps> = ({
   const [currentScreen, setCurrentScreen] = useState<Screen>('dashboard');
   const [plans, setPlans] = useState<Plan[]>([]);
   const [usageEntries, setUsageEntries] = useState<UsageEntry[]>([]);
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -87,11 +88,41 @@ const App: React.FC<AppProps> = ({
         <Text>Navigate: [D]ashboard | [A]dd Plan | [U]sage Log | [C]ost Summary | [Q]uit</Text>
       </Box>
       <Box padding={1}>
-        {currentScreen === 'dashboard' && <Dashboard plans={plansWithUsage} />}
+        {currentScreen === 'dashboard' && (
+          <Dashboard
+            plans={plansWithUsage}
+            onLogUsage={(planId) => {
+              setSelectedPlanId(planId);
+              setCurrentScreen('usageLog');
+            }}
+          />
+        )}
         {currentScreen === 'addPlan' && (
           <AddPlanForm onSubmit={handleAddPlan} onCancel={() => setCurrentScreen('dashboard')} />
         )}
-        {currentScreen === 'usageLog' && <UsageLogView entries={usageEntries} />}
+        {currentScreen === 'usageLog' && (
+          <UsageLogView
+            entries={usageEntries}
+            planId={selectedPlanId || ''}
+            onAdd={(tokens, note) => {
+              const newEntry: UsageEntry = {
+                id: `entry_${Date.now()}`,
+                planId: selectedPlanId || '',
+                date: new Date().toISOString().split('T')[0],
+                tokens,
+                periodStart: '',
+                periodEnd: '',
+              };
+              handleAddUsageEntry(newEntry);
+            }}
+            onDelete={(entryId) => {
+              const updatedEntries = usageEntries.filter((e) => e.id !== entryId);
+              setUsageEntries(updatedEntries);
+              saveUsageEntries(usageFilePath, updatedEntries);
+            }}
+            onBack={() => setCurrentScreen('dashboard')}
+          />
+        )}
         {currentScreen === 'costSummary' && <CostSummary plans={plansWithUsage} />}
       </Box>
     </Box>

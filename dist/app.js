@@ -11,6 +11,7 @@ const App = ({ plansFilePath = './data/plans.json', usageFilePath = './data/usag
     const [currentScreen, setCurrentScreen] = useState('dashboard');
     const [plans, setPlans] = useState([]);
     const [usageEntries, setUsageEntries] = useState([]);
+    const [selectedPlanId, setSelectedPlanId] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     useEffect(() => {
@@ -52,7 +53,24 @@ const App = ({ plansFilePath = './data/plans.json', usageFilePath = './data/usag
     if (error) {
         return (_jsx(Box, { children: _jsxs(Text, { color: "red", children: ["Error: ", error] }) }));
     }
-    return (_jsxs(Box, { flexDirection: "column", children: [_jsx(Box, { borderStyle: "single", padding: 1, children: _jsx(Text, { bold: true, children: "AI Subscription Tracker" }) }), _jsx(Box, { children: _jsx(Text, { children: "Navigate: [D]ashboard | [A]dd Plan | [U]sage Log | [C]ost Summary | [Q]uit" }) }), _jsxs(Box, { padding: 1, children: [currentScreen === 'dashboard' && _jsx(Dashboard, { plans: plansWithUsage }), currentScreen === 'addPlan' && (_jsx(AddPlanForm, { onSubmit: handleAddPlan, onCancel: () => setCurrentScreen('dashboard') })), currentScreen === 'usageLog' && _jsx(UsageLogView, { entries: usageEntries }), currentScreen === 'costSummary' && _jsx(CostSummary, { plans: plansWithUsage })] })] }));
+    return (_jsxs(Box, { flexDirection: "column", children: [_jsx(Box, { borderStyle: "single", padding: 1, children: _jsx(Text, { bold: true, children: "AI Subscription Tracker" }) }), _jsx(Box, { children: _jsx(Text, { children: "Navigate: [D]ashboard | [A]dd Plan | [U]sage Log | [C]ost Summary | [Q]uit" }) }), _jsxs(Box, { padding: 1, children: [currentScreen === 'dashboard' && (_jsx(Dashboard, { plans: plansWithUsage, onLogUsage: (planId) => {
+                            setSelectedPlanId(planId);
+                            setCurrentScreen('usageLog');
+                        } })), currentScreen === 'addPlan' && (_jsx(AddPlanForm, { onSubmit: handleAddPlan, onCancel: () => setCurrentScreen('dashboard') })), currentScreen === 'usageLog' && (_jsx(UsageLogView, { entries: usageEntries, planId: selectedPlanId || '', onAdd: (tokens, note) => {
+                            const newEntry = {
+                                id: `entry_${Date.now()}`,
+                                planId: selectedPlanId || '',
+                                date: new Date().toISOString().split('T')[0],
+                                tokens,
+                                periodStart: '',
+                                periodEnd: '',
+                            };
+                            handleAddUsageEntry(newEntry);
+                        }, onDelete: (entryId) => {
+                            const updatedEntries = usageEntries.filter((e) => e.id !== entryId);
+                            setUsageEntries(updatedEntries);
+                            saveUsageEntries(usageFilePath, updatedEntries);
+                        }, onBack: () => setCurrentScreen('dashboard') })), currentScreen === 'costSummary' && _jsx(CostSummary, { plans: plansWithUsage })] })] }));
 };
 export default App;
 //# sourceMappingURL=app.js.map
