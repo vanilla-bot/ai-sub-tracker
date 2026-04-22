@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import type { Plan, UsageEntry } from '../models/plan';
 
 const FILE_NOT_FOUND_ERROR_CODES = ['ENOENT', 'ENFILE'] as const;
@@ -9,6 +10,26 @@ const FILE_NOT_FOUND_ERROR_CODES = ['ENOENT', 'ENFILE'] as const;
  */
 function isFileNotFoundError(error: { code?: string }): boolean {
   return FILE_NOT_FOUND_ERROR_CODES.includes(error.code as typeof FILE_NOT_FOUND_ERROR_CODES[number]);
+}
+
+/**
+ * Loads plans from a JSON file (sync).
+ * Returns an empty array if the file doesn't exist.
+ */
+export function loadPlansSync(filePath: string): Plan[] {
+  try {
+    const content = readFileSync(filePath, 'utf-8');
+    const parsed = JSON.parse(content);
+    if (!Array.isArray(parsed)) {
+      throw new Error('Plans file must contain a JSON array');
+    }
+    return parsed as Plan[];
+  } catch (error: unknown) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      return [];
+    }
+    throw error;
+  }
 }
 
 /**
@@ -25,7 +46,7 @@ export async function loadPlans(filePath: string): Promise<Plan[]> {
     }
     return parsed as Plan[];
   } catch (error: unknown) {
-    if (isFileNotFoundError(error as { code?: string })) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
       return [];
     }
     throw error;
@@ -35,10 +56,39 @@ export async function loadPlans(filePath: string): Promise<Plan[]> {
 /**
  * Saves plans to a JSON file.
  */
+export function savePlansSync(filePath: string, plans: Plan[]): void {
+  const dir = path.dirname(filePath);
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(filePath, JSON.stringify(plans, null, 2), 'utf-8');
+}
+
+/**
+ * Saves plans to a JSON file.
+ */
 export async function savePlans(filePath: string, plans: Plan[]): Promise<void> {
   const dir = path.dirname(filePath);
   await fs.promises.mkdir(dir, { recursive: true });
   await fs.promises.writeFile(filePath, JSON.stringify(plans, null, 2), 'utf-8');
+}
+
+/**
+ * Loads usage entries from a JSON file (sync).
+ * Returns an empty array if the file doesn't exist.
+ */
+export function loadUsageEntriesSync(filePath: string): UsageEntry[] {
+  try {
+    const content = readFileSync(filePath, 'utf-8');
+    const parsed = JSON.parse(content);
+    if (!Array.isArray(parsed)) {
+      throw new Error('Usage entries file must contain a JSON array');
+    }
+    return parsed as UsageEntry[];
+  } catch (error: unknown) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      return [];
+    }
+    throw error;
+  }
 }
 
 /**
@@ -55,11 +105,20 @@ export async function loadUsageEntries(filePath: string): Promise<UsageEntry[]> 
     }
     return parsed as UsageEntry[];
   } catch (error: unknown) {
-    if (isFileNotFoundError(error as { code?: string })) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
       return [];
     }
     throw error;
   }
+}
+
+/**
+ * Saves usage entries to a JSON file.
+ */
+export function saveUsageEntriesSync(filePath: string, entries: UsageEntry[]): void {
+  const dir = path.dirname(filePath);
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(filePath, JSON.stringify(entries, null, 2), 'utf-8');
 }
 
 /**

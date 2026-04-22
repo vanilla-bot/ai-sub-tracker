@@ -190,12 +190,12 @@ const Dashboard: React.FC<DashboardProps> = ({
       {plans[selectedIndex] && (
         <Box marginTop={1} padding={1} borderStyle="single">
           <Text bold>Selected: </Text>
-          <Text>{plans[selectedIndex].name}</Text>
+          <Text>{plans[selectedIndex].planName}</Text>
           <Text dimColor> ({plans[selectedIndex].provider})</Text>
           <Text> | </Text>
           <Text>
             {plans[selectedIndex].totalTokensUsed.toLocaleString()} /{' '}
-            {plans[selectedIndex].maxTokens.toLocaleString()} tokens used
+            {plans[selectedIndex].tokenBudget.toLocaleString()} tokens used
           </Text>
         </Box>
       )}

@@ -1,39 +1,17 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Box, Text } from 'ink';
-import Dashboard from './components/Dashboard';
-import AddPlanForm from './components/AddPlanForm';
-import UsageLogView from './components/UsageLogView';
-import CostSummary from './components/CostSummary';
-import { loadPlans, loadUsageEntries, savePlans, saveUsageEntries } from './store/fileStore';
-import { computePlanWithUsage } from './models/plan';
-const App = ({ plansFilePath = './data/plans.json', usageFilePath = './data/usage.json', }) => {
+import Dashboard from './components/Dashboard.js'
+import AddPlanForm from './components/AddPlanForm.js'
+import UsageLogView from './components/UsageLogView.js'
+import CostSummary from './components/CostSummary.js'
+import { loadPlansSync, loadUsageEntriesSync, savePlans, saveUsageEntries } from './store/fileStore.js'
+import { computePlanWithUsage } from './models/plan.js'
+const App = ({ plansFilePath = './config/plans.json', usageFilePath = './data/usage_log.json', }) => {
     const [currentScreen, setCurrentScreen] = useState('dashboard');
-    const [plans, setPlans] = useState([]);
-    const [usageEntries, setUsageEntries] = useState([]);
+    const [plans, setPlans] = useState(() => loadPlansSync(plansFilePath));
+    const [usageEntries, setUsageEntries] = useState(() => loadUsageEntriesSync(usageFilePath));
     const [selectedPlanId, setSelectedPlanId] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
-    useEffect(() => {
-        const loadData = async () => {
-            try {
-                setIsLoading(true);
-                const [loadedPlans, loadedUsage] = await Promise.all([
-                    loadPlans(plansFilePath),
-                    loadUsageEntries(usageFilePath),
-                ]);
-                setPlans(loadedPlans);
-                setUsageEntries(loadedUsage);
-            }
-            catch (err) {
-                setError(err instanceof Error ? err.message : 'Failed to load data');
-            }
-            finally {
-                setIsLoading(false);
-            }
-        };
-        loadData();
-    }, [plansFilePath, usageFilePath]);
     const plansWithUsage = plans.map((plan) => computePlanWithUsage(plan, usageEntries));
     const handleAddPlan = async (plan) => {
         const updatedPlans = [...plans, plan];
@@ -47,30 +25,15 @@ const App = ({ plansFilePath = './data/plans.json', usageFilePath = './data/usag
         await saveUsageEntries(usageFilePath, updatedEntries);
         setCurrentScreen('dashboard');
     };
-    if (isLoading) {
-        return (_jsx(Box, { children: _jsx(Text, { children: "Loading..." }) }));
-    }
-    if (error) {
-        return (_jsx(Box, { children: _jsxs(Text, { color: "red", children: ["Error: ", error] }) }));
-    }
+    const handleDeleteUsageEntry = (entryId) => {
+        const updatedEntries = usageEntries.filter((e) => e.id !== entryId);
+        setUsageEntries(updatedEntries);
+        saveUsageEntries(usageFilePath, updatedEntries);
+    };
     return (_jsxs(Box, { flexDirection: "column", children: [_jsx(Box, { borderStyle: "single", padding: 1, children: _jsx(Text, { bold: true, children: "AI Subscription Tracker" }) }), _jsx(Box, { children: _jsx(Text, { children: "Navigate: [D]ashboard | [A]dd Plan | [U]sage Log | [C]ost Summary | [Q]uit" }) }), _jsxs(Box, { padding: 1, children: [currentScreen === 'dashboard' && (_jsx(Dashboard, { plans: plansWithUsage, onLogUsage: (planId) => {
                             setSelectedPlanId(planId);
                             setCurrentScreen('usageLog');
-                        } })), currentScreen === 'addPlan' && (_jsx(AddPlanForm, { onSubmit: handleAddPlan, onCancel: () => setCurrentScreen('dashboard') })), currentScreen === 'usageLog' && (_jsx(UsageLogView, { entries: usageEntries, planId: selectedPlanId || '', onAdd: (tokens, note) => {
-                            const newEntry = {
-                                id: `entry_${Date.now()}`,
-                                planId: selectedPlanId || '',
-                                date: new Date().toISOString().split('T')[0],
-                                tokens,
-                                periodStart: '',
-                                periodEnd: '',
-                            };
-                            handleAddUsageEntry(newEntry);
-                        }, onDelete: (entryId) => {
-                            const updatedEntries = usageEntries.filter((e) => e.id !== entryId);
-                            setUsageEntries(updatedEntries);
-                            saveUsageEntries(usageFilePath, updatedEntries);
-                        }, onBack: () => setCurrentScreen('dashboard') })), currentScreen === 'costSummary' && _jsx(CostSummary, { plans: plansWithUsage, onBack: () => setCurrentScreen('dashboard') })] })] }));
+                        } })), currentScreen === 'addPlan' && (_jsx(AddPlanForm, { onSubmit: handleAddPlan, onCancel: () => setCurrentScreen('dashboard') })), currentScreen === 'usageLog' && selectedPlanId && (_jsx(UsageLogView, { entries: usageEntries, planId: selectedPlanId, onAdd: handleAddUsageEntry, onDelete: handleDeleteUsageEntry, onBack: () => setCurrentScreen('dashboard') })), currentScreen === 'costSummary' && (_jsx(CostSummary, { plans: plansWithUsage, onBack: () => setCurrentScreen('dashboard') }))] })] }));
 };
 export default App;
 //# sourceMappingURL=app.js.map

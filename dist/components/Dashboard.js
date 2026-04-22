@@ -1,7 +1,7 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useState, useEffect, useCallback } from 'react';
 import { Box, Text } from 'ink';
-import PlanCard from './PlanCard';
+import PlanCard from './PlanCard.js'
 const Dashboard = ({ plans, onAddPlan, onEditPlan, onDeletePlan, onLogUsage, onCostSummary, onQuit, }) => {
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [columns, setColumns] = useState(3);

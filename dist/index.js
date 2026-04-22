@@ -2,15 +2,15 @@
 import meow from 'meow';
 import React from 'react';
 import { render } from 'ink';
-import App from './app';
+import App from './app.js'
 const cli = meow(`
   Usage
     $ ai-sub-tracker
 
   Options
     --help  Show this help message
-    --plans  Path to plans JSON file (default: ./data/plans.json)
-    --usage  Path to usage JSON file (default: ./data/usage.json)
+    --plans  Path to plans JSON file (default: ./config/plans.json)
+    --usage  Path to usage log JSON file (default: ./data/usage_log.json)
 
   Examples
     $ ai-sub-tracker

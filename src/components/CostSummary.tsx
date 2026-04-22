@@ -54,7 +54,7 @@ const CostSummary: React.FC<CostSummaryProps> = ({ plans, onBack }) => {
 
   // Calculate totals
   const monthlyTotal = plans.reduce((sum, plan) => {
-    return sum + getMonthlyEquivalent(plan.price, plan.period);
+    return sum + getMonthlyEquivalent(plan.pricePerPeriod, plan.period);
   }, 0);
 
   const annualProjection = monthlyTotal * 12;
@@ -102,14 +102,14 @@ const CostSummary: React.FC<CostSummaryProps> = ({ plans, onBack }) => {
 
       {/* Plan Rows */}
       {plans.map((plan) => {
-        const monthlyEquiv = getMonthlyEquivalent(plan.price, plan.period);
+        const monthlyEquiv = getMonthlyEquivalent(plan.pricePerPeriod, plan.period);
         const divisor = getPeriodDivisor(plan.period);
-        
+
         return (
           <Box key={plan.id} justifyContent="space-between" paddingX={1}>
-            <Text>{plan.name}</Text>
+            <Text>{plan.planName}</Text>
             <Text dimColor>{formatPeriod(plan.period)}</Text>
-            <Text>{formatCurrency(plan.price, plan.currency)}</Text>
+            <Text>{formatCurrency(plan.pricePerPeriod, plan.currency)}</Text>
             <Text>{formatCurrency(monthlyEquiv, plan.currency)}/mo</Text>
           </Box>
         );

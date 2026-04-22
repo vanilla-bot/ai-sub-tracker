@@ -1,6 +1,6 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { Box, Text, useInput } from 'ink';
-import { formatCurrency } from '../models/plan';
+import { formatCurrency } from '../models/plan.js'
 /**
  * Calculate the monthly equivalent cost for a plan based on its billing period.
  */

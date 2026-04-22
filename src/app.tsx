@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Box, Text } from 'ink';
 import Dashboard from './components/Dashboard';
 import AddPlanForm from './components/AddPlanForm';
 import UsageLogView from './components/UsageLogView';
 import CostSummary from './components/CostSummary';
-import { loadPlans, loadUsageEntries, savePlans, saveUsageEntries } from './store/fileStore';
+import { loadPlansSync, loadUsageEntriesSync, savePlans, saveUsageEntries } from './store/fileStore';
 import { computePlanWithUsage } from './models/plan';
 import type { Plan, UsageEntry, PlanWithUsage } from './models/plan';
 
@@ -16,34 +16,13 @@ interface AppProps {
 }
 
 const App: React.FC<AppProps> = ({
-  plansFilePath = './data/plans.json',
-  usageFilePath = './data/usage.json',
+  plansFilePath = './config/plans.json',
+  usageFilePath = './data/usage_log.json',
 }) => {
   const [currentScreen, setCurrentScreen] = useState<Screen>('dashboard');
-  const [plans, setPlans] = useState<Plan[]>([]);
-  const [usageEntries, setUsageEntries] = useState<UsageEntry[]>([]);
+  const [plans, setPlans] = useState<Plan[]>(() => loadPlansSync(plansFilePath));
+  const [usageEntries, setUsageEntries] = useState<UsageEntry[]>(() => loadUsageEntriesSync(usageFilePath));
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setIsLoading(true);
-        const [loadedPlans, loadedUsage] = await Promise.all([
-          loadPlans(plansFilePath),
-          loadUsageEntries(usageFilePath),
-        ]);
-        setPlans(loadedPlans);
-        setUsageEntries(loadedUsage);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load data');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadData();
-  }, [plansFilePath, usageFilePath]);
 
   const plansWithUsage: PlanWithUsage[] = plans.map((plan) =>
     computePlanWithUsage(plan, usageEntries)
@@ -63,21 +42,11 @@ const App: React.FC<AppProps> = ({
     setCurrentScreen('dashboard');
   };
 
-  if (isLoading) {
-    return (
-      <Box>
-        <Text>Loading...</Text>
-      </Box>
-    );
-  }
-
-  if (error) {
-    return (
-      <Box>
-        <Text color="red">Error: {error}</Text>
-      </Box>
-    );
-  }
+  const handleDeleteUsageEntry = (entryId: string) => {
+    const updatedEntries = usageEntries.filter((e) => e.id !== entryId);
+    setUsageEntries(updatedEntries);
+    saveUsageEntries(usageFilePath, updatedEntries);
+  };
 
   return (
     <Box flexDirection="column">
@@ -100,30 +69,18 @@ const App: React.FC<AppProps> = ({
         {currentScreen === 'addPlan' && (
           <AddPlanForm onSubmit={handleAddPlan} onCancel={() => setCurrentScreen('dashboard')} />
         )}
-        {currentScreen === 'usageLog' && (
+        {currentScreen === 'usageLog' && selectedPlanId && (
           <UsageLogView
             entries={usageEntries}
-            planId={selectedPlanId || ''}
-            onAdd={(tokens, note) => {
-              const newEntry: UsageEntry = {
-                id: `entry_${Date.now()}`,
-                planId: selectedPlanId || '',
-                date: new Date().toISOString().split('T')[0],
-                tokens,
-                periodStart: '',
-                periodEnd: '',
-              };
-              handleAddUsageEntry(newEntry);
-            }}
-            onDelete={(entryId) => {
-              const updatedEntries = usageEntries.filter((e) => e.id !== entryId);
-              setUsageEntries(updatedEntries);
-              saveUsageEntries(usageFilePath, updatedEntries);
-            }}
+            planId={selectedPlanId}
+            onAdd={handleAddUsageEntry}
+            onDelete={handleDeleteUsageEntry}
             onBack={() => setCurrentScreen('dashboard')}
           />
         )}
-        {currentScreen === 'costSummary' && <CostSummary plans={plansWithUsage} onBack={() => setCurrentScreen('dashboard')} />}
+        {currentScreen === 'costSummary' && (
+          <CostSummary plans={plansWithUsage} onBack={() => setCurrentScreen('dashboard')} />
+        )}
       </Box>
     </Box>
   );

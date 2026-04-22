@@ -10,23 +10,27 @@ export type PlanStatus = 'active' | 'expired' | 'cancelled';
 // Plan type: subscription plan definition
 export interface Plan {
   id: string;
-  name: string;
+  planName: string;
   provider: Provider;
   period: PlanPeriod;
-  price: number;
+  pricePerPeriod: number;
   currency: string;
-  maxTokens: number;
+  tokenBudget: number;
   status: PlanStatus;
   startDate: string;
-  endDate: string;
+  renewalDate: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // UsageEntry type: individual usage record
 export interface UsageEntry {
   id: string;
   planId: string;
-  date: string;
   tokens: number;
+  date: string;
+  note: string;
+  createdAt: string;
   periodStart: string;
   periodEnd: string;
 }
@@ -50,8 +54,8 @@ export function computePlanWithUsage(plan: Plan, usageEntries: UsageEntry[]): Pl
   const totalTokensUsed = planEntries.reduce((sum, entry) => sum + entry.tokens, 0);
 
   // Calculate remaining tokens and percentage
-  const remainingTokens = Math.max(0, plan.maxTokens - totalTokensUsed);
-  const usagePercentage = Math.round((totalTokensUsed / plan.maxTokens) * 100);
+  const remainingTokens = Math.max(0, plan.tokenBudget - totalTokensUsed);
+  const usagePercentage = Math.round((totalTokensUsed / plan.tokenBudget) * 100);
 
   return {
     ...plan,

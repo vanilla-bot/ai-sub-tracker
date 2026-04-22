@@ -73,7 +73,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, isSelected = false }) => {
       </Box>
 
       {/* Plan name */}
-      <Text>{plan.name}</Text>
+      <Text>{plan.planName}</Text>
 
       {/* Visual budget bar */}
       <Box marginY={1}>
@@ -85,10 +85,10 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, isSelected = false }) => {
       {/* Price and period */}
       <Box justifyContent="space-between">
         <Text>
-          {formatPrice(plan.price, plan.currency)}
+          {formatPrice(plan.pricePerPeriod, plan.currency)}
           <Text dimColor>{periodLabel}</Text>
         </Text>
-        <Text dimColor>Renews: {plan.endDate}</Text>
+        <Text dimColor>Renews: {plan.renewalDate}</Text>
       </Box>
 
       {/* Token usage details */}

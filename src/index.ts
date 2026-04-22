@@ -11,8 +11,8 @@ const cli = meow(`
 
   Options
     --help  Show this help message
-    --plans  Path to plans JSON file (default: ./data/plans.json)
-    --usage  Path to usage JSON file (default: ./data/usage.json)
+    --plans  Path to plans JSON file (default: ./config/plans.json)
+    --usage  Path to usage log JSON file (default: ./data/usage_log.json)
 
   Examples
     $ ai-sub-tracker
