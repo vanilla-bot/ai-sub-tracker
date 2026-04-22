@@ -51,12 +51,18 @@ A lightweight dashboard for power users who juggle multiple AI coding plan subsc
 
 ## 4. Tech Stack
 
-- **Runtime**: Python 3.11+ (minimal dependencies)
-- **UI**: Terminal TUI via [Textual](https://github.com/Textualize/textual) — rich, keyboard-navigable interface
-- **Data storage**: `config/plans.json` + `data/usage_log.json` (local JSON files, no database)
-- **Config format**: Human-readable JSON (easy to edit by hand, no special tools needed)
-- **Package manager**: uv (fast, modern Python tooling)
-- **Testing**: pytest with pytest-cov
+- **Language**: TypeScript (strict mode)
+- **Runtime**: Node.js 20+
+- **TUI Framework**: [Ink](https://github.com/vadimdemedes/ink) — React for CLIs, excellent TS support, used by AWS CDK, Prisma, GitHub CLI, Vercel
+- **Package Manager**: npm (with `package-lock.json`)
+- **Data Storage**: `config/plans.json` + `data/usage_log.json` (local JSON files, no database)
+- **Testing**: Vitest
+
+> **Why Ink over alternatives?**
+> - React for CLIs — if you know React, you already know Ink
+> - Most reviewed/modified TUI lib for TypeScript
+> - Large ecosystem, actively maintained
+> - Easy to add components and screens
 
 ---
 
@@ -66,28 +72,32 @@ A lightweight dashboard for power users who juggle multiple AI coding plan subsc
 ai-sub-tracker/
 ├── CONCEPT.md
 ├── README.md
-├── pyproject.toml
-├── uv.lock
+├── package.json
+├── tsconfig.json
+├── tsconfig.node.json
+├── vitest.config.ts
 ├── src/
-│   └── ai_sub_tracker/
-│       ├── __init__.py
-│       ├── cli.py          # Textual TUI entrypoint
-│       ├── models.py       # Pydantic models (Plan, UsageEntry)
-│       ├── store.py        # JSON file read/write
-│       ├── screens/
-│       │   ├── dashboard.py    # Main plan cards screen
-│       │   ├── add_plan.py    # Add/edit form
-│       │   ├── usage_log.py   # Usage history view
-│       │   └── cost_summary.py
-│       └── utils.py
+│   ├── index.ts           # CLI entrypoint (inklecat / node --loader)
+│   ├── app.ts             # Root Ink <App> component
+│   ├── components/
+│   │   ├── Dashboard.tsx      # Main plan cards screen
+│   │   ├── PlanCard.tsx        # Individual provider card
+│   │   ├── AddPlanForm.tsx     # Add/edit form
+│   │   ├── UsageLogView.tsx    # Usage history view
+│   │   └── CostSummary.tsx
+│   ├── models/
+│   │   └── plan.ts        # Plan, UsageEntry, PlanPeriod types
+│   ├── store/
+│   │   └── fileStore.ts   # JSON file read/write
+│   └── utils/
+│       └── helpers.ts
 ├── config/
 │   └── plans.json          # User's plan definitions (gitignored)
 ├── data/
 │   └── usage_log.json      # Usage entries (gitignored)
 └── tests/
-    ├── test_models.py
-    ├── test_store.py
-    └── test_cli.py
+    ├── plan.test.ts
+    └── fileStore.test.ts
 ```
 
 ---
@@ -98,6 +108,7 @@ ai-sub-tracker/
 - Payment processing or subscription management
 - Multi-user / cloud sync
 - Non-coding plans (chat-only subscriptions)
+- Web UI (TUI only for v1)
 
 ---
 
@@ -114,6 +125,7 @@ ai-sub-tracker/
 
 ## 8. Open Questions
 
-- Should the app support **auto-discovery** of token usage via provider APIs (if any public ones exist)?
 - Want a **web version** (FastAPI + HTMX) instead of or alongside the TUI?
+- Should the app support **auto-discovery** of token usage via provider APIs (if any public ones exist)?
 - Any other providers to add beyond these four?
+- CLI invocation style: `ai-sub-tracker` (global install) or `npx ai-sub-tracker`?
