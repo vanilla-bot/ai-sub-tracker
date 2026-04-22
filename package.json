@@ -7,7 +7,7 @@
     "ai-sub-tracker": "./dist/index.js"
   },
   "scripts": {
-    "build": "tsc && node scripts/fix-imports.mjs dist",
+    "build": "tsc && node scripts/fix.mjs dist",
     "dev": "npm run build && node dist/index.js",
     "test": "vitest",
     "test:run": "vitest run"
